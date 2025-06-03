@@ -5,4 +5,4 @@ from .models import Character
 class CharacterForm(forms.ModelForm):
     class Meta:
         model = Character
-        fields = ['name', 'nickname', 'religion', 'archetype']
+        fields = ['name', 'nickname', 'skin_tone', 'hairstyle', 'facial_hair', 'religion', 'archetype']
