@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Village Square</title>
+  <style>
+    body {
+      font-family: serif;
+      background-color: #f0efe5;
+      margin: 0;
+      padding: 20px;
+      background-image: url('/static/images/village_square.jpg'); /* optional */
+      background-size: cover;
+      color: #222;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .character-name {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-style: italic;
+      color: #555;
+    }
+
+    .actions {
+      margin-top: 30px;
+    }
+
+    .actions a {
+      margin: 10px;
+      padding: 10px 20px;
+      text-decoration: none;
+      background-color: #d4a373;
+      color: white;
+      border-radius: 5px;
+    }
+
+    .actions a:hover {
+      background-color: #b5835a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="character-name">{{ character.name }} the {{ character.archtype }}</div>
+    <div class="subtitle">stands in the village square, ready to begin their journey...</div>
+
+    <p>The sun rises over the dusty streets of the village. Townsfolk bustle about, preparing for the day's work, unaware that history is about to be made.</p>
+
+    <div class="actions">
+      <a href="#">Explore the Village</a>
+      <a href="#">Enter the Arena</a>
+      <a href="#">View Character Sheet</a>
+    </div>
+  </div>
+</body>
+</html>

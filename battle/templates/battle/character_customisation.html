@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Character Customisation</title>
+</head>
+<body>
+  <h1>Create Your Hero</h1>
+
+  <form method="post">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+    </table>
+
+    <button type="submit">Begin Your Journey</button>
+  </form>
+
+  <a href="{% url 'home' %}">← Back to Home</a>
+</body>
+</html>

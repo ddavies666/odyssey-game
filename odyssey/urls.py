@@ -16,8 +16,12 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from battle.views import home_page, create_character_view, start_journey_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('', home_page, name='home'),
+    path('character-customisation', create_character_view, name='create_character_view'),
+    path('start-journey<int:character_id>/', start_journey_view, name='start_journey_view')
 ]

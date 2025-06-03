@@ -14,7 +14,7 @@ class Archetype(models.Model):
         ('psilos', 'Psilos'),
         ('strategos', 'Strategos'),
     ]
-    archtype = models.CharField(max_length=100, choices=ARCHETYPES)
+    archetype = models.CharField(max_length=100, choices=ARCHETYPES)
     description = models.TextField(blank=True)
 
     # Optional: Bonus stats
@@ -28,7 +28,7 @@ class Archetype(models.Model):
     culture = models.CharField(max_length=100, blank=True)  # e.g., "Spartan", "Athenian", "Macedonian"
 
     def __str__(self):
-        return self.archtype
+        return self.archetype
 
 
 class Character(models.Model):
@@ -58,7 +58,7 @@ class Character(models.Model):
     stamina = models.IntegerField(default=100)
     morale = models.IntegerField(default=100)
     loyalty = models.IntegerField(default=100)
-    archtype = models.ForeignKey(Archetype, on_delete=models.SET_NULL, null=True, blank=True)
+    archetype = models.ForeignKey(Archetype, on_delete=models.SET_NULL, null=True, blank=True)
 
     # 🗡 Equipped weapon
     equipped_weapon = models.ForeignKey('Weapon', on_delete=models.SET_NULL, null=True, blank=True)
@@ -173,7 +173,7 @@ class Weapon(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_weapon_class_display()})"
- 
+
     def calculate_damage(self):
         """calculate damage from the weapon damage range available
 

@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "archtype",
+                    "archetype",
                     models.CharField(
                         choices=[
                             ("hoplite", "Hoplite"),
@@ -161,7 +161,7 @@ class Migration(migrations.Migration):
                 ("morale", models.IntegerField(default=100)),
                 ("loyalty", models.IntegerField(default=100)),
                 (
-                    "archtype",
+                    "archetype",
                     models.ForeignKey(
                         blank=True,
                         null=True,
