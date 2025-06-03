@@ -1,4 +1,5 @@
 from django.db import models
+from random import randint
 
 # Create your models here.
 
@@ -75,9 +76,55 @@ class Character(models.Model):
 
     def __str__(self):
         return f"{self.name} aka {self.nickname}"
-    
-    def recieve_damage(self):
-        healt
+
+    def attack(self, target: object) -> int:
+        """
+        Attack Target Function
+        Targets health reduced accordingly
+
+        Args:
+            target (object): Target to inflcit attack upon
+
+        Returns:
+            int: final damage inflicted
+        """
+        if not self.equipped_weapon:
+            damage = self.strength
+        else:
+            damage = self.strength + self.equipped_weapon.calculate_damage()
+
+        final_damage = target.receive_damage(damage)
+
+        return final_damage
+
+    def receive_damage(self, damage: int) -> int:
+        """
+        Generates the damaged recieved from the attack. Minusing the attack from the overall defence of the target.
+
+        Args:
+            damage (int): final damage taken
+        """
+        defense = self.total_defence_stats()
+        actual_damage = max(0, damage - defense)
+
+        self.health -= actual_damage
+        if self.health < 0:
+            self.health = 0
+        self.save()
+
+        return actual_damage
+
+    def total_defence_stats(self) -> int:
+        """calculate the total defence of the character, depending on their armour and defence skills.
+
+        Returns:
+            int: total defence/armour points
+        """
+        total_defence = 0
+        for armour in [self.head, self.chest, self.shoulders, self.arms, self.hands, self.waist, self.legs, self.feet, self.shield]:
+            if armour:
+                total_defence += armour.defence
+        return total_defence
 
 
 class Armour(models.Model):
@@ -114,7 +161,8 @@ class Weapon(models.Model):
     ]
     name = models.CharField(max_length=100)
     weapon_class = models.CharField(max_length=20, choices=WEAPON_CLASS_CHOICES)
-    damage = models.IntegerField()
+    min_damage = models.IntegerField()
+    max_damage = models.IntegerField()
     weight = models.FloatField()
     durability = models.IntegerField(default=100)
     is_ranged = models.BooleanField(default=False)
@@ -125,3 +173,13 @@ class Weapon(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_weapon_class_display()})"
+ 
+    def calculate_damage(self):
+        """calculate damage from the weapon damage range available
+
+        Returns:
+            int: damage points
+        """
+        damage = randint(self.min_damage, self.max_damage)
+        return damage
+
