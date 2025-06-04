@@ -66,6 +66,8 @@ class Character(models.Model):
     loyalty = models.IntegerField(default=100)
     archetype = models.ForeignKey(Archetype, on_delete=models.SET_NULL, null=True, blank=True)
     money = models.IntegerField(default=34)
+    level = models.IntegerField(default=1)
+    xp_points = models.FloatField(default=0)
 
     # 🗡 Equipped weapon
     equipped_weapon = models.ForeignKey('Weapon', on_delete=models.SET_NULL, null=True, blank=True)
@@ -81,7 +83,7 @@ class Character(models.Model):
     feet = models.ForeignKey('Armour', on_delete=models.SET_NULL, null=True, blank=True, related_name='feet_armor')
     shield = models.ForeignKey('Armour', on_delete=models.SET_NULL, null=True, blank=True, related_name='shield_armor')
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} aka {self.nickname}"
 
     def attack(self, target: object) -> int:
@@ -122,7 +124,8 @@ class Character(models.Model):
         return actual_damage
 
     def total_defence_stats(self) -> int:
-        """calculate the total defence of the character, depending on their armour and defence skills.
+        """
+        calculate the total defence of the character, depending on their armour and defence skills.
 
         Returns:
             int: total defence/armour points
@@ -134,7 +137,8 @@ class Character(models.Model):
         return total_defence
 
     def adjust_money(self, amount: int) -> int:
-        """Adjust money of character from buying or selling items
+        """
+        Adjust money of character from buying or selling items
 
         Args:
             amount (int): the amount spent/earnt
@@ -147,7 +151,8 @@ class Character(models.Model):
         return self.money
 
     def battle_winnings(self, level: int):
-        """Generate winnings from victorious battles
+        """
+        Generate winnings from victorious battles
         higher rewards based on higher levels
 
         Args:
@@ -166,6 +171,42 @@ class Character(models.Model):
         self.save()
 
         return winnings
+
+    def gain_xp(self, opponent_level: int) -> int:
+        """
+        The amount of xp gained from battles
+
+        Args:
+            opponent_level (int): the level of opponent, determines the 
+            amount of xp gained. 
+
+            if xp surpasses the limit for the current level of the user
+            it will trigger a level up for the character
+
+        Returns:
+            int: amount of xp gained
+        """
+
+        gained_xp = randint(10, 20) * opponent_level
+        self.xp_points += gained_xp
+
+        while self.xp_points >= self.xp_to_next_level():
+            self.xp_points -= self.xp_to_next_level()
+            self.level += 1
+
+        self.save()
+
+        return gained_xp
+
+    def xp_to_next_level(self) -> int:
+        """
+        Increases the xp amount needed to level up as the character
+        progreses and levels up.
+
+        Returns:
+            int: the amount of xp required to level up
+        """
+        return 100 + (self.level - 1) * 50
 
 
 class Armour(models.Model):

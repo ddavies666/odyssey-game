@@ -93,9 +93,15 @@ def battle_view(request, fighter1_id, fighter2_id):
 
     # Check for winner
     if fighter_1.health <= 0 or fighter_2.health <= 0:
-        winner = fighter_1.name if fighter_2.health <= 0 else fighter_2.name
-        request.session["message"] = f"🏆 {winner} wins the battle!"
-        
+        winner = fighter_1 if fighter_2.health <= 0 else fighter_2
+        loser = fighter_1 if fighter_1.health <= 0 else fighter_2
+        winnings = winner.battle_winnings(loser.level)
+        xp_gained = winner.gain_xp(loser.level)
+        request.session["message"] = (
+            f"🏆 {winner.name} wins the battle!<br>"
+            f"Gold earned: {winnings}<br>"
+            f"XP earned: {xp_gained}"
+)
         # Reset health
         fighter_1.health = fighter_1.max_health
         fighter_2.health = fighter_2.max_health
@@ -107,5 +113,6 @@ def battle_view(request, fighter1_id, fighter2_id):
     'fighter_1': fighter_1,
     'fighter_2': fighter_2,
     'message': request.session.pop("message", None),
+    'money': request.session.pop("message", None),
     'turn': request.session.get("turn", "fighter_1")
 })

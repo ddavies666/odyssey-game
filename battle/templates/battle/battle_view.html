@@ -70,7 +70,8 @@
   </div>
 
   {% if message %}
-    <div class="message">{{ message }}</div>
+    <div class="message"><p>{{ message|safe }}</p>
+    </div>
   {% endif %}
 
   {% if "wins the battle" in message %}
