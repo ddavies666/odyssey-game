@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from random import randint
 
 # Create your models here.
@@ -49,12 +50,14 @@ class Character(models.Model):
         ('islam', 'Islam'),
         ('judaism', 'Judaism'),]
 
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='characters', null=True)
     name = models.CharField(max_length=100)
     religion = models.CharField(max_length=100, choices=RELIGION_CHOICES)
     nickname = models.CharField(max_length=100)
-    skin_tone = models.CharField(max_length=100, choices=[(1, 'White'), (2, 'Tan'), (3, 'Black')], default=1)
-    hairstyle = models.CharField(max_length=100, choices=[(1, 'Bald'), (2, 'Short'), (3, 'Medium'), (4, 'Long')], default=1)
-    facial_hair = models.CharField(max_length=100, choices=[(1, 'Bald'), (2, 'Short'), (3, 'Medium'), (4, 'Long')], default=1)
+    skin_tone = models.CharField(max_length=100, choices=[('White', 'White'), ('Tan', 'Tan'), ('Black', 'Black')], default=1)
+    hairstyle = models.CharField(max_length=100, choices=[('Bald', 'Bald'), ('Short', 'Short'), ('Medium', 'Medium'), ('Long', 'Long')], default=1)
+    facial_hair = models.CharField(max_length=100, choices=[('Bald', 'Bald'), ('Short', 'Short'), ('Medium', 'Medium'), ('Long', 'Long')], default=1)
+    max_health = models.IntegerField(default=100)
     health = models.IntegerField(default=100)
     strength = models.IntegerField(default=10)
     agility = models.IntegerField(default=10)
@@ -62,6 +65,7 @@ class Character(models.Model):
     morale = models.IntegerField(default=100)
     loyalty = models.IntegerField(default=100)
     archetype = models.ForeignKey(Archetype, on_delete=models.SET_NULL, null=True, blank=True)
+    money = models.IntegerField(default=34)
 
     # 🗡 Equipped weapon
     equipped_weapon = models.ForeignKey('Weapon', on_delete=models.SET_NULL, null=True, blank=True)
@@ -128,6 +132,40 @@ class Character(models.Model):
             if armour:
                 total_defence += armour.defence
         return total_defence
+
+    def adjust_money(self, amount: int) -> int:
+        """Adjust money of character from buying or selling items
+
+        Args:
+            amount (int): the amount spent/earnt
+        """
+        self.money += amount
+        if self.money < 0:
+            self.money = 0
+
+        self.save()
+        return self.money
+
+    def battle_winnings(self, level: int):
+        """Generate winnings from victorious battles
+        higher rewards based on higher levels
+
+        Args:
+            level (int): the level of opponent fought
+        """
+        if level == 1:
+            winnings = randint(50, 200)
+        elif level == 2:
+            winnings = randint(200, 450)
+        elif level == 3:
+            winnings = randint(450, 700)
+        else:
+            raise ValueError()
+
+        self.money += winnings
+        self.save()
+
+        return winnings
 
 
 class Armour(models.Model):

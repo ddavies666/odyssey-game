@@ -16,12 +16,19 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from battle.views import home_page, create_character_view, start_journey_view
+from battle.views import home_page, create_character_view, start_journey_view, battle_view, register_view, login_page
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', home_page, name='home'),
     path('character-customisation', create_character_view, name='create_character_view'),
-    path('start-journey<int:character_id>/', start_journey_view, name='start_journey_view')
+    path('start-journey<int:character_id>/', start_journey_view, name='start_journey_view'),
+    path('battle/<int:fighter1_id>/<int:fighter2_id>/', battle_view, name='battle'),
+    path('register/', register_view, name='register'),
+    path('login/', login_page, name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout')
+
+
 ]

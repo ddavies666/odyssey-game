@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Battle Arena</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #f3f0e6;
+      padding: 40px;
+      text-align: center;
+    }
+    .fighter-box {
+      display: inline-block;
+      width: 40%;
+      padding: 20px;
+      margin: 20px;
+      background-color: #fff;
+      border: 2px solid #444;
+      border-radius: 10px;
+    }
+    .fighter-name {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+    .hp {
+      font-weight: bold;
+      color: #900;
+    }
+    .message {
+      font-size: 1.2em;
+      margin: 20px 0;
+      color: #333;
+    }
+    .actions form {
+      display: inline-block;
+      margin: 0 10px;
+    }
+    button {
+      font-size: 1em;
+      padding: 10px 20px;
+      border: none;
+      background-color: #444;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #333;
+    }
+    .return-link {
+      margin-top: 30px;
+      display: block;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>⚔️ Battle Arena</h1>
+
+  <div class="fighter-box">
+    <div class="fighter-name">{{ fighter_1.name }} {{ fighter_1.nickname }}</div>
+    <p class="hp">Health: {{ fighter_1.health }}/{{ fighter_1.max_health }}</p>
+  </div>
+
+  <div class="fighter-box">
+    <div class="fighter-name">{{ fighter_2.name }} {{ fighter_2.nickname }}</div>
+    <p class="hp">Health: {{ fighter_2.health }}/{{ fighter_2.max_health }}</p>
+  </div>
+
+  {% if message %}
+    <div class="message">{{ message }}</div>
+  {% endif %}
+
+  {% if "wins the battle" in message %}
+    <a class="return-link" href="{% url 'start_journey_view' fighter_1.id %}">🏠 Return to Village</a>
+  {% elif turn == "fighter_1" %}
+    <div class="actions">
+      <form method="post">
+        {% csrf_token %}
+        <button name="action" value="attack">⚔️ Attack</button>
+      </form>
+      <form method="post">
+        {% csrf_token %}
+        <button name="action" value="heal">💊 Heal</button>
+      </form>
+    </div>
+  {% else %}
+    <form method="post">
+      {% csrf_token %}
+      <button name="action" value="enemy_turn">▶️ Enemy Turn</button>
+    </form>
+  {% endif %}
+
+</body>
+</html>

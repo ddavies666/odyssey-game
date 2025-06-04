@@ -1,11 +1,42 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, logout, authenticate
 from .forms import CharacterForm
 from .models import Character
 # Create your views here.
 
 
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log in after register
+            return redirect('home')
+    else:
+        form = UserCreationForm()
+    return render(request, 'battle/register.html', {'form': form})
+
+
 def home_page(request):
     return render(request, "battle/home.html")
+
+
+def login_page(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'battle/login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'battle/home.html')
 
 
 def start_journey_view(request, character_id):
@@ -23,3 +54,58 @@ def create_character_view(request):
         form = CharacterForm()
 
     return render(request, 'battle/character_customisation.html', {'form': form})
+
+
+def battle_view(request, fighter1_id, fighter2_id):
+    fighter_1 = get_object_or_404(Character, id=fighter1_id)
+    fighter_2 = get_object_or_404(Character, id=fighter2_id)
+
+    message = None
+    winner = None
+    turn = request.session.get("turn", "fighter_1")
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        print("ACTION RECEIVED:", action)
+        print("CURRENT TURN:", turn)
+
+        if turn == "fighter_1":
+            if action == "attack":
+                dmg = fighter_1.attack(fighter_2)
+                request.session["message"] = f"{fighter_1.name} attacked {fighter_2.name} for {dmg} damage!"
+            
+            elif action == "heal":
+                heal_amount = min(10, fighter_1.max_health - fighter_1.health)
+                fighter_1.health += heal_amount
+                request.session["message"] = f"{fighter_1.name} healed for {heal_amount} HP!"
+            
+            request.session["turn"] = "fighter_2"
+
+        elif turn == "fighter_2":
+            dmg = fighter_2.attack(fighter_1)
+            message = f"{fighter_2.name} attacked {fighter_1.name} for {dmg} damage!"
+            
+            request.session["turn"] = "fighter_1"
+
+        # Save updated states
+        fighter_1.save()
+        fighter_2.save()
+
+    # Check for winner
+    if fighter_1.health <= 0 or fighter_2.health <= 0:
+        winner = fighter_1.name if fighter_2.health <= 0 else fighter_2.name
+        request.session["message"] = f"🏆 {winner} wins the battle!"
+        
+        # Reset health
+        fighter_1.health = fighter_1.max_health
+        fighter_2.health = fighter_2.max_health
+        fighter_1.save()
+        fighter_2.save()
+
+    # Reset turn and redirect to avoid post-back issues
+    return render(request, 'battle/battle_view.html', {
+    'fighter_1': fighter_1,
+    'fighter_2': fighter_2,
+    'message': request.session.pop("message", None),
+    'turn': request.session.get("turn", "fighter_1")
+})
