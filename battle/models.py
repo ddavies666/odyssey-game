@@ -62,12 +62,15 @@ class Character(models.Model):
     strength = models.IntegerField(default=10)
     agility = models.IntegerField(default=10)
     stamina = models.IntegerField(default=100)
+    max_stamina = models.IntegerField(default=100)
     morale = models.IntegerField(default=100)
     loyalty = models.IntegerField(default=100)
     archetype = models.ForeignKey(Archetype, on_delete=models.SET_NULL, null=True, blank=True)
     money = models.IntegerField(default=34)
     level = models.IntegerField(default=1)
     xp_points = models.FloatField(default=0)
+    vitality = models.IntegerField(default=1)
+    focus = models.IntegerField(default=1)
 
     # 🗡 Equipped weapon
     equipped_weapon = models.ForeignKey('Weapon', on_delete=models.SET_NULL, null=True, blank=True)
@@ -86,21 +89,36 @@ class Character(models.Model):
     def __str__(self) -> str:
         return f"{self.name} aka {self.nickname}"
 
-    def attack(self, target: object) -> int:
+    def attack(self, target: object, attack_input: str) -> int:
         """
         Attack Target Function
         Targets health reduced accordingly
 
         Args:
             target (object): Target to inflcit attack upon
+            attack_input (str): Type of attack. i.e light, heavy etc
 
         Returns:
             int: final damage inflicted
         """
+        # attack type, damage multiplier, stamina stamina_cost
+        attack_types = {
+            "light": {"modifier": 0.8, "stamina_cost": 10},
+            "normal": {"modifier": 1.0, "stamina_cost": 20},
+            "heavy": {"modifier": 1.5, "stamina_cost": 35},
+        }
+
+        attack = attack_types[attack_input]
+        if self.stamina < attack['stamina_cost']:
+            return f'{self.name} does not have enough stamina for {attack_input} attack'
+
+        self.stamina -= attack['stamina_cost']
+
         if not self.equipped_weapon:
-            damage = self.strength
+            damage = self.strength * attack["modifier"]
+
         else:
-            damage = self.strength + self.equipped_weapon.calculate_damage()
+            damage = self.strength + self.equipped_weapon.calculate_damage() * attack["modifier"]
 
         final_damage = target.receive_damage(damage)
 
@@ -122,6 +140,51 @@ class Character(models.Model):
         self.save()
 
         return actual_damage
+
+    def rest(self, focus) -> int:
+        """
+        Rest Action in Battle
+
+        Recovers stamina mulitplied by the character's focus attribute.
+
+        Returns:
+            int: the amount of stamina gained
+        """
+        stamina_recovery_amount = 25 * focus
+        self.stamina += stamina_recovery_amount
+        if self.stamina > self.max_stamina:
+            self.stamina = self.max_stamina
+        self.save()
+        return stamina_recovery_amount
+
+    def heal(self, vitality) -> int:
+        """
+        Heal Action in Battle.
+        Recovers health using the character's vitality attirbute as a multiplier.
+
+        Args:
+            vitaity (int): mulitiplier used to calculate health regained.
+
+        Returns:
+            int: the amount of health gained
+        """
+        health_recovery_amount = 25 * vitality
+        self.health += health_recovery_amount
+        if self.health > self.max_health:
+            self.health = self.max_health
+        self.save()
+        return health_recovery_amount
+
+    @property
+    def health_percent(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
+        if self.max_health == 0:
+            return 0
+        return int((self.health / self.max_health) * 100)
 
     def total_defence_stats(self) -> int:
         """
@@ -190,14 +253,15 @@ class Character(models.Model):
         gained_xp = randint(10, 20) * opponent_level
         self.xp_points += gained_xp
 
-        while self.xp_points >= self.xp_to_next_level():
-            self.xp_points -= self.xp_to_next_level()
+        while self.xp_points >= self.xp_to_next_level:
+            self.xp_points -= self.xp_to_next_level
             self.level += 1
 
         self.save()
 
         return gained_xp
 
+    @property
     def xp_to_next_level(self) -> int:
         """
         Increases the xp amount needed to level up as the character

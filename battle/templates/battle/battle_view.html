@@ -80,11 +80,23 @@
     <div class="actions">
       <form method="post">
         {% csrf_token %}
-        <button name="action" value="attack">⚔️ Attack</button>
+        <button name="action" value="light">⚔️ Light Attack</button>
+      </form>
+      <form method="post">
+        {% csrf_token %}
+        <button name="action" value="normal">⚔️ Normal Attack</button>
+      </form>
+      <form method="post">
+        {% csrf_token %}
+        <button name="action" value="heavy">⚔️ Heavy Attack</button>
       </form>
       <form method="post">
         {% csrf_token %}
         <button name="action" value="heal">💊 Heal</button>
+      </form>
+      <form method="post">
+        {% csrf_token %}
+        <button name="action" value="rest">Rest</button>
       </form>
     </div>
   {% else %}
@@ -93,6 +105,33 @@
       <button name="action" value="enemy_turn">▶️ Enemy Turn</button>
     </form>
   {% endif %}
+  <div class="character-panel">
+    <h2>{{ fighter_1.name }} - Level {{ fighter_1.level }}</h2>
+    <p><strong>XP:</strong> {{ fighter_1.xp_points }} / {{ fighter_1.xp_to_next_level }}</p>
+
+    {% with percent=fighter_1.xp_points|divisibleby:fighter_1.xp_to_next_level|floatformat:0 %}
+    <div class="xp-bar">
+      <div class="xp-bar-fill" style="width: {{ percent }}%;"></div>
+    </div>
+    
+    {% endwith %}
+
+
+    <p><strong>❤️ Health:</strong> {{ fighter_1.health }} / {{ fighter_1.max_health }}</p>
+    <div class="xp-bar">
+      <div class="xp-bar-fill" style="width: {{ character.health_percent }}%; background: linear-gradient(to right, #e53935, #ef5350);"></div>
+    </div>
+    <p><strong>⚡ Stamina :</strong> {{ fighter_1.stamina }} / {{ fighter_1.max_stamina }}</p>
+
+    <p><strong>💰 Gold:</strong> {{ fighter_1.money }} drachmae</p>
+    {% if fighter_1.equipped_weapon %}
+      <p><strong>⚔️ Weapon:</strong> {{ fighter_1.equipped_weapon.name }}</p>
+    {% endif %}
+
+    {% if fighter_1.chest %}
+      <p><strong>🛡️ Chest Armor:</strong> {{ fighter_1.chest.name }}</p>
+    {% endif %}
+  </div>
 
 </body>
 </html>

@@ -65,26 +65,32 @@ def battle_view(request, fighter1_id, fighter2_id):
     turn = request.session.get("turn", "fighter_1")
 
     if request.method == 'POST':
-        action = request.POST.get('action')
-        print("ACTION RECEIVED:", action)
+        attack_input = request.POST.get('action')
+        print("ACTION RECEIVED:", attack_input)
         print("CURRENT TURN:", turn)
 
         if turn == "fighter_1":
-            if action == "attack":
-                dmg = fighter_1.attack(fighter_2)
+            if attack_input in ["light", "normal", "heavy"]:
+                dmg = fighter_1.attack(fighter_2, attack_input)
                 request.session["message"] = f"{fighter_1.name} attacked {fighter_2.name} for {dmg} damage!"
-            
-            elif action == "heal":
-                heal_amount = min(10, fighter_1.max_health - fighter_1.health)
+
+            elif attack_input == "heal":
+                heal_amount = fighter_1.heal(fighter_1.vitality)
                 fighter_1.health += heal_amount
                 request.session["message"] = f"{fighter_1.name} healed for {heal_amount} HP!"
-            
+
+            elif attack_input == "rest":
+                stamina_recovery_amount = fighter_1.rest(fighter_1.focus)
+                fighter_1.stamina += stamina_recovery_amount
+                request.session["message"] = f"{fighter_1.name} rested for {stamina_recovery_amount} Stamina!"
+
             request.session["turn"] = "fighter_2"
 
         elif turn == "fighter_2":
-            dmg = fighter_2.attack(fighter_1)
-            message = f"{fighter_2.name} attacked {fighter_1.name} for {dmg} damage!"
-            
+            if attack_input in ["light", "normal", "heavy"]:
+                dmg = fighter_2.attack(fighter_1, attack_input)
+                message = f"{fighter_2.name} attacked {fighter_1.name} for {dmg} damage!"
+
             request.session["turn"] = "fighter_1"
 
         # Save updated states

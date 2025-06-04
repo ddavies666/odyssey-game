@@ -48,21 +48,71 @@
     .actions a:hover {
       background-color: #b5835a;
     }
+
+    .character-panel {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: 40px auto 0;
+      text-align: left;
+      box-shadow: 0 0 10px #ccc;
+    }
+
+    .xp-bar {
+      width: 100%;
+      height: 20px;
+      background: #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .xp-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, #4caf50, #81c784);
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="character-name">{{ character.name }} the {{ character.nickname }}</div>
-    <div class="subtitle">The {{character.archetype }} stands in the village square, ready to begin their journey...</div>
+    <div class="subtitle">The {{ character.archetype }} stands in the village square, ready to begin their journey...</div>
 
     <p>The sun rises over the dusty streets of the village. Townsfolk bustle about, preparing for the day's work, unaware that history is about to be made.</p>
 
     <div class="actions">
-        <a href="{% url 'battle' character.id 1 %}">⚔️ Enter Battle</a>
+      <a href="{% url 'battle' character.id 1 %}">⚔️ Enter Battle</a>
       <a href="#">Explore the Village</a>
-      <a href="#">Enter the Arena</a>
-      <a href="#">View Character Sheet</a>
+
     </div>
+  </div>
+
+  <div class="character-panel">
+    <h2>{{ character.name }} - Level {{ character.level }}</h2>
+    <p><strong>XP:</strong> {{ character.xp_points }} / {{ character.xp_to_next_level }}</p>
+
+    {% with percent=character.xp_points|divisibleby:character.xp_to_next_level|floatformat:0 %}
+    <div class="xp-bar">
+      <div class="xp-bar-fill" style="width: {{ percent }}%;"></div>
+    </div>
+    
+    {% endwith %}
+
+
+    <p><strong>❤️ Health:</strong> {{ character.health }} / {{ character.max_health }}</p>
+    <div class="xp-bar">
+      <div class="xp-bar-fill" style="width: {{ character.health_percent }}%; background: linear-gradient(to right, #e53935, #ef5350);"></div>
+    </div>
+
+    <p><strong>💰 Gold:</strong> {{ character.money }} drachmae</p>
+    {% if character.equipped_weapon %}
+      <p><strong>⚔️ Weapon:</strong> {{ character.equipped_weapon.name }}</p>
+    {% endif %}
+
+    {% if character.chest %}
+      <p><strong>🛡️ Chest Armor:</strong> {{ character.chest.name }}</p>
+    {% endif %}
   </div>
 </body>
 </html>
