@@ -99,28 +99,27 @@
         <button name="action" value="rest">Rest</button>
       </form>
     </div>
+
   {% else %}
     <form method="post">
       {% csrf_token %}
       <button name="action" value="enemy_turn">▶️ Enemy Turn</button>
     </form>
   {% endif %}
+
   <div class="character-panel">
-    <h2>{{ fighter_1.name }} - Level {{ fighter_1.level }}</h2>
-    <p><strong>XP:</strong> {{ fighter_1.xp_points }} / {{ fighter_1.xp_to_next_level }}</p>
+    <h2>{{ fighter_1.name }} Level {{ fighter_1.level }}</h2>
 
-    {% with percent=fighter_1.xp_points|divisibleby:fighter_1.xp_to_next_level|floatformat:0 %}
-    <div class="xp-bar">
-      <div class="xp-bar-fill" style="width: {{ percent }}%;"></div>
+    <p><strong>⭐ XP:</strong> {{ fighter_1.xp_points }} / {{ fighter_1.xp_to_next_level }}</p>
+    <div class="bar-container">
+      <div class="bar-fill" style="width: {{ fighter_1.xp_percent }}%; background: linear-gradient(to right, #4caf50, #81c784);"></div>
     </div>
-    
-    {% endwith %}
-
 
     <p><strong>❤️ Health:</strong> {{ fighter_1.health }} / {{ fighter_1.max_health }}</p>
-    <div class="xp-bar">
-      <div class="xp-bar-fill" style="width: {{ character.health_percent }}%; background: linear-gradient(to right, #e53935, #ef5350);"></div>
+    <div class="bar-container">
+      <div class="bar-fill" style="width: {{ fighter_1.health_percent }}%; background: linear-gradient(to right, #e53935, #ef5350);"></div>
     </div>
+
     <p><strong>⚡ Stamina :</strong> {{ fighter_1.stamina }} / {{ fighter_1.max_stamina }}</p>
 
     <p><strong>💰 Gold:</strong> {{ fighter_1.money }} drachmae</p>

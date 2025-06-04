@@ -186,6 +186,12 @@ class Character(models.Model):
             return 0
         return int((self.health / self.max_health) * 100)
 
+    @property
+    def xp_percent(self):
+        if self.xp_to_next_level == 0:
+            return 0
+        return int((self.xp_points / self.xp_to_next_level) * 100)
+
     def total_defence_stats(self) -> int:
         """
         calculate the total defence of the character, depending on their armour and defence skills.
