@@ -44,6 +44,8 @@ def start_journey_view(request, character_id):
     character = get_object_or_404(Character, id=character_id)
     return render(request, 'battle/start_journey.html', {'character': character})
 
+def village_view(request):
+    return render(request, "battle/village.html")
 
 def character_select_view(request):
     characters = Character.objects.all()

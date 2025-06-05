@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Village Square</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-image: url("{% static 'images/village.png' %}");
+      background-size: cover;
+      background-position: center;
+      margin: 0;
+      padding: 190px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .village-container {
+      background-color: rgba(0, 0, 0, 0.65);
+      padding: 40px;
+      border-radius: 15px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #f9e4b7;
+      margin-bottom: 20px;
+    }
+
+    .location-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .location {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      width: 200px;
+      transition: background 0.3s;
+    }
+
+    .location:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .location a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 30px;
+      color: #fdd835;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="village-container">
+    <h1>🏘️ Welcome to the Village</h1>
+
+    <div class="location-list">
+      <div class="location">
+        <a href="#">🏪 Weapon Shop</a>
+      </div>
+      <div class="location">
+        <a href="#">🛡️ Armor Shop</a>
+      </div>
+      <div class="location">
+        <a href="#">🧘 Rest / Heal</a>
+      </div>
+      <div class="location">
+        <a href="#">🏛️ Temple</a> <!-- placeholder for lore/training -->
+      </div>
+    </div>
+
+    <a class="back-link" href="{% url 'start_journey_view' 1 %}">⬅️ Back to Village Square</a>
+  </div>
+
+</body>
+</html>

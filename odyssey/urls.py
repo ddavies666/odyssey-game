@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
-from battle.views import home_page, create_character_view, start_journey_view, battle_view, register_view, login_page, character_select_view
+from battle.views import home_page, create_character_view, start_journey_view, battle_view, register_view, login_page, character_select_view, village_view
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -30,6 +30,7 @@ urlpatterns = [
     path('login/', login_page, name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('select-character/', character_select_view, name='character_select'),
+    path('village/', village_view, name='village_view'),
 
 
 

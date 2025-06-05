@@ -102,7 +102,7 @@
 
     <div class="actions">
       <a href="{% url 'battle' character.id 1 %}">⚔️ Enter Battle</a>
-      <a href="#">Explore the Village</a>
+      <a href="{% url 'village_view' %}">Explore the Village</a>
       <a href="{% url 'home' %}">Homepage</a>
     </div>
   </div>
@@ -125,7 +125,7 @@
 
 
     {% if character.equipped_weapon %}
-      <p><strong>⚔️ Weapon:</strong> {{ character.equipped_weapon.name }}</p>
+      <p><strong>⚔️ Weapon:</strong> {{ character.equipped_weapon.name }} - ({{character.equipped_weapon.min_damage}}-{{character.equipped_weapon.max_damage}}) Damage Points</p>
     {% endif %}
 
     {% if character.chest %}
