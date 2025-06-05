@@ -53,6 +53,22 @@
       display: block;
       font-weight: bold;
     }
+    .bar-container {
+  width: 100%;
+  height: 20px;
+  background: #2e352670;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.bar-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+
+
   </style>
 </head>
 <body>
@@ -107,30 +123,54 @@
     </form>
   {% endif %}
 
-  <div class="character-panel">
-    <h2>{{ fighter_1.name }} Level {{ fighter_1.level }}</h2>
-
-    <p><strong>⭐ XP:</strong> {{ fighter_1.xp_points }} / {{ fighter_1.xp_to_next_level }}</p>
-    <div class="bar-container">
-      <div class="bar-fill" style="width: {{ fighter_1.xp_percent }}%; background: linear-gradient(to right, #4caf50, #81c784);"></div>
+  <div style="display: flex; justify-content: center; gap: 650px; margin-top: 40px;">
+    <!-- Fighter 1 Column -->
+    <div style="width: 300px; background-color: f3f0e6; padding: 20px; border-radius: 10px;">
+      <h2>{{ fighter_1.name }} - Level {{ fighter_1.level }}</h2>
+      
+      <p><strong>❤️ Health:</strong> {{ fighter_1.health }} / {{ fighter_1.max_health }}</p>
+      <div class="bar-container">
+        <div class="bar-fill" style="width: {{ fighter_1.health_percent }}%; background: linear-gradient(to right, #e53935, #ef5350);"></div>
+      </div>
+  
+      <p><strong>⚡ Stamina:</strong> {{ fighter_1.stamina }} / {{ fighter_1.max_stamina }}</p>
+      <div class="bar-container">
+        <div class="bar-fill" style="width: {{ fighter_1.stamina_percent }}%; background: #fdd835;"></div>
+      </div>
+  
+      <p><strong>💰 Gold:</strong> {{ fighter_1.money }} drachmae</p>
+      {% if fighter_1.equipped_weapon %}
+        <p><strong>⚔️ Weapon:</strong> {{ fighter_1.equipped_weapon.name }}</p>
+      {% endif %}
+      {% if fighter_1.chest %}
+        <p><strong>🛡️ Chest Armor:</strong> {{ fighter_1.chest.name }}</p>
+      {% endif %}
     </div>
-
-    <p><strong>❤️ Health:</strong> {{ fighter_1.health }} / {{ fighter_1.max_health }}</p>
-    <div class="bar-container">
-      <div class="bar-fill" style="width: {{ fighter_1.health_percent }}%; background: linear-gradient(to right, #e53935, #ef5350);"></div>
+  
+    <!-- Fighter 2 Column -->
+    <div style="width: 300px; background-color: f3f0e6; padding: 20px; border-radius: 10px;">
+      <h2>{{ fighter_2.name }} - Level {{ fighter_2.level }}</h2>
+      
+      <p><strong>❤️ Health:</strong> {{ fighter_2.health }} / {{ fighter_2.max_health }}</p>
+      <div class="bar-container">
+        <div class="bar-fill" style="width: {{ fighter_2.health_percent }}%; background: linear-gradient(to right, #e53935, #ef5350);"></div>
+      </div>
+  
+      <p><strong>⚡ Stamina:</strong> {{ fighter_2.stamina }} / {{ fighter_2.max_stamina }}</p>
+      <div class="bar-container">
+        <div class="bar-fill" style="width: {{ fighter_2.stamina_percent }}%; background: #fdd835;"></div>
+      </div>
+  
+      <p><strong>💰 Gold:</strong> {{ fighter_2.money }} drachmae</p>
+      {% if fighter_2.equipped_weapon %}
+        <p><strong>⚔️ Weapon:</strong> {{ fighter_2.equipped_weapon.name }}</p>
+      {% endif %}
+      {% if fighter_2.chest %}
+        <p><strong>🛡️ Chest Armor:</strong> {{ fighter_2.chest.name }}</p>
+      {% endif %}
     </div>
-
-    <p><strong>⚡ Stamina :</strong> {{ fighter_1.stamina }} / {{ fighter_1.max_stamina }}</p>
-
-    <p><strong>💰 Gold:</strong> {{ fighter_1.money }} drachmae</p>
-    {% if fighter_1.equipped_weapon %}
-      <p><strong>⚔️ Weapon:</strong> {{ fighter_1.equipped_weapon.name }}</p>
-    {% endif %}
-
-    {% if fighter_1.chest %}
-      <p><strong>🛡️ Chest Armor:</strong> {{ fighter_1.chest.name }}</p>
-    {% endif %}
   </div>
+  
 
 </body>
 </html>

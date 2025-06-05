@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from .forms import CharacterForm
 from .models import Character
+import random
 # Create your views here.
 
 
@@ -44,6 +45,11 @@ def start_journey_view(request, character_id):
     return render(request, 'battle/start_journey.html', {'character': character})
 
 
+def character_select_view(request):
+    characters = Character.objects.all()
+    return render(request, 'battle/character_select.html', {'characters': characters})
+
+
 def create_character_view(request):
     if request.method == 'POST':
         form = CharacterForm(request.POST)
@@ -57,6 +63,7 @@ def create_character_view(request):
 
 
 def battle_view(request, fighter1_id, fighter2_id):
+    
     fighter_1 = get_object_or_404(Character, id=fighter1_id)
     fighter_2 = get_object_or_404(Character, id=fighter2_id)
 
@@ -87,8 +94,14 @@ def battle_view(request, fighter1_id, fighter2_id):
             request.session["turn"] = "fighter_2"
 
         elif turn == "fighter_2":
-            if attack_input in ["light", "normal", "heavy"]:
+            if attack_input == 'enemy_turn':
+                attack_input = random.choice(["light", "normal", "heavy"])
                 dmg = fighter_2.attack(fighter_1, attack_input)
+                if fighter_2.stamina < 30:
+                    fighter_2.rest(fighter_2.focus)
+                print(attack_input)
+                dmg = fighter_2.attack(fighter_1, attack_input)
+                print(dmg)
                 message = f"{fighter_2.name} attacked {fighter_1.name} for {dmg} damage!"
 
             request.session["turn"] = "fighter_1"
@@ -108,11 +121,11 @@ def battle_view(request, fighter1_id, fighter2_id):
             f"Gold earned: {winnings}<br>"
             f"XP earned: {xp_gained}"
 )
-        # Reset health
-        fighter_1.health = fighter_1.max_health
-        fighter_2.health = fighter_2.max_health
-        fighter_1.save()
-        fighter_2.save()
+        
+        fighter_1.resest_attributes()
+        fighter_2.resest_attributes()
+    
+    
 
     # Reset turn and redirect to avoid post-back issues
     return render(request, 'battle/battle_view.html', {

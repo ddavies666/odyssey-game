@@ -1,0 +1,23 @@
+<h1>🎮 Choose Your Character</h1>
+
+{% if characters %}
+  <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+    {% for char in characters %}
+      <div style="border: 1px solid #ccc; padding: 15px; border-radius: 10px; width: 250px;">
+        <h3>{{ char.name }} (Level {{ char.level }})</h3>
+        <p>XP: {{ char.xp_points }} / {{ char.xp_to_next_level }}</p>
+        <p>Gold: {{ char.money }} drachmae</p>
+        <a href="{% url 'start_journey_view' char.id %}">
+          <button>▶️ Play</button>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No characters found.</p>
+{% endif %}
+
+<br>
+<a href="{% url 'create_character_view' %}">
+  <button>Create New Character</button>
+</a>

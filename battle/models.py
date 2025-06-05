@@ -123,6 +123,11 @@ class Character(models.Model):
         final_damage = target.receive_damage(damage)
 
         return final_damage
+    
+    def resest_attributes(self):
+        self.health = self.max_health
+        self.stamina = self.max_stamina
+        self.save()
 
     def receive_damage(self, damage: int) -> int:
         """
@@ -185,6 +190,17 @@ class Character(models.Model):
         if self.max_health == 0:
             return 0
         return int((self.health / self.max_health) * 100)
+    
+    @property
+    def stamina_percent(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
+        if self.max_stamina == 0:
+            return 0
+        return int((self.stamina / self.max_stamina) * 100)
 
     @property
     def xp_percent(self):
